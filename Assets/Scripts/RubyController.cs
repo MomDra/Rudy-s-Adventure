@@ -9,10 +9,16 @@ public class RubyController : MonoBehaviour
 
     [SerializeField]
     int maxHealth = 5;
+    [SerializeField]
     int currentHealth;
 
     public int health { get => currentHealth; }
     public int maxhealth { get => maxHealth; }
+
+    [SerializeField]
+    float timeInvincible = 2.0f;
+    bool isInvincible;
+    float invincibleTimer;
 
     Rigidbody2D myRigid;
     void Awake()
@@ -31,11 +37,27 @@ public class RubyController : MonoBehaviour
         position.y = position.y + speed * vertical * Time.deltaTime;
 
         myRigid.MovePosition(position);
-    }
 
-    public void ChangeHelath(int amount)
+        if (isInvincible)
+        {
+            invincibleTimer -= Time.deltaTime;
+            if (invincibleTimer < 0)
+                isInvincible = false;
+        }
+    }
+    public void ChangeHealth(int amount)
     {
+        if (amount < 0)
+        {
+            if (isInvincible)
+                return;
+
+            isInvincible = true;
+            invincibleTimer = timeInvincible;
+        }
+
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+
         Debug.Log(currentHealth + "/" + maxHealth);
     }
 }
