@@ -11,11 +11,16 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     float changeTime = 3f;
 
+    [SerializeField]
+    ParticleSystem smokeEffect;
+
     Rigidbody2D myRigid;
     Animator myAnimator;
 
     float timer;
     int direction = 1;
+
+    bool broken = true;
     void Awake()
     {
         myRigid = GetComponent<Rigidbody2D>();
@@ -25,6 +30,11 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (!broken)
+        {
+            return;
+        }
+
         timer -= Time.deltaTime;
 
         if (timer < 0)
@@ -35,6 +45,11 @@ public class EnemyController : MonoBehaviour
     }   
     void FixedUpdate()
     {
+        if (!broken)
+        {
+            return;
+        }
+
         Vector2 position = myRigid.position;
 
         if (vertical)
@@ -62,5 +77,13 @@ public class EnemyController : MonoBehaviour
         {
             player.ChangeHealth(-1);
         }
+    }
+
+    public void Fix()
+    {
+        broken = false;
+        myRigid.simulated = false;
+        myAnimator.SetTrigger("Fixed");
+        smokeEffect.Stop();
     }
 }

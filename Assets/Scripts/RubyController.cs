@@ -12,6 +12,9 @@ public class RubyController : MonoBehaviour
     [SerializeField]
     int currentHealth;
 
+    [SerializeField]
+    GameObject projectilePrefab;
+
     public int health { get => currentHealth; }
     public int maxhealth { get => maxHealth; }
 
@@ -38,6 +41,11 @@ public class RubyController : MonoBehaviour
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0)
                 isInvincible = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Launch();
         }
     }
     void FixedUpdate()
@@ -78,6 +86,17 @@ public class RubyController : MonoBehaviour
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
 
+        UIHealthBar.instance.SetValue(currentHealth / (float)maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
+    }
+
+    void Launch()
+    {
+        GameObject projectileObject = Instantiate(projectilePrefab, myRigid.position + Vector2.up * 0.5f, Quaternion.identity);
+
+        Projectile projectile = projectileObject.GetComponent<Projectile>();
+        projectile.Launch(lookDirection, 300);
+
+        myAnimator.SetTrigger("Launch");
     }
 }
