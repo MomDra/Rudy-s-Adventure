@@ -16,16 +16,21 @@ public class EnemyController : MonoBehaviour
 
     Rigidbody2D myRigid;
     Animator myAnimator;
+    AudioSource myAudioSource;
 
     float timer;
     int direction = 1;
 
     bool broken = true;
+
+    [SerializeField]
+    AudioClip fixedSound;
     void Awake()
     {
         myRigid = GetComponent<Rigidbody2D>();
         timer = changeTime;
         myAnimator = GetComponent<Animator>();
+        myAudioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -85,5 +90,7 @@ public class EnemyController : MonoBehaviour
         myRigid.simulated = false;
         myAnimator.SetTrigger("Fixed");
         smokeEffect.Stop();
+
+        myAudioSource.PlayOneShot(fixedSound);
     }
 }

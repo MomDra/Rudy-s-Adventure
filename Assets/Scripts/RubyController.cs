@@ -25,12 +25,19 @@ public class RubyController : MonoBehaviour
 
     Rigidbody2D myRigid;
     Animator myAnimator;
+    AudioSource myAudioSource;
+
+    [SerializeField]
+    AudioClip throwSound;
+    [SerializeField]
+    AudioClip hitSound;
 
     Vector2 lookDirection = new Vector2(1, 0);
     void Awake()
     {
         myRigid = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
+        myAudioSource = GetComponent<AudioSource>();
 
         currentHealth = maxHealth;
     }
@@ -43,9 +50,23 @@ public class RubyController : MonoBehaviour
                 isInvincible = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             Launch();
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(myRigid.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+            if (hit.collider != null)
+            {
+                Debug.Log("Raycast has hit the object " + hit.collider.gameObject);
+                NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
+                if (character != null)
+                {
+                    character.DisplayDialog();
+                }
+            }
         }
     }
     void FixedUpdate()
@@ -82,6 +103,8 @@ public class RubyController : MonoBehaviour
 
             isInvincible = true;
             invincibleTimer = timeInvincible;
+
+            PlaySound(hitSound);
         }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
@@ -98,5 +121,12 @@ public class RubyController : MonoBehaviour
         projectile.Launch(lookDirection, 300);
 
         myAnimator.SetTrigger("Launch");
+
+        PlaySound(throwSound);
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        myAudioSource.PlayOneShot(clip);
     }
 }

@@ -27,7 +27,7 @@ public class Projectile : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         //we also add a debug log to know what the projectile touch
-        Debug.Log("Projectile Collision with " + other.gameObject);
+        Debug.Log("Projectile Collision with " + other.gameObject.name);
 
         EnemyController e = other.collider.GetComponent<EnemyController>();
         if (e != null)
